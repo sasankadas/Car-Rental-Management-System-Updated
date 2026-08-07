@@ -64,7 +64,7 @@ public class AdminController {
 		model.addAttribute("pageTitle", "Admin Dashboard");
 		model.addAttribute("pageSubtitle", "Manage cars, users, bookings, payments and reports.");
 
-		model.addAttribute("totalUsers", userRepository.countByRole("USER"));
+		model.addAttribute("totalUsers", userRepository.countByRole("ROLE_USER"));
 		model.addAttribute("totalCars", carRepository.count());
 		model.addAttribute("totalBookings", bookingRepository.count());
 
@@ -73,6 +73,8 @@ public class AdminController {
 
 		model.addAttribute("recentBookings", bookingRepository.findTop5ByOrderByBookingDateDesc());
 		model.addAttribute("latestCars", carRepository.findTop5ByOrderByCreatedAtDesc());
+		
+	
 
 		return "admin/dashboard";
 	}
@@ -370,10 +372,17 @@ public class AdminController {
 
 	// ---------------------------------------------------------------- Profile
 
+
+	
+	
 	@GetMapping("/profile")
-	public String profile(Model model, Principal principal) {
+	public String profile(Model model,Principal principal) {
 		model.addAttribute("admin", userRepository.findByEmail(principal.getName()));
-		return "admin/profile";
+	    model.addAttribute("pageTitle", "Admin Profile");
+	    model.addAttribute("pageSubtitle",
+	            "Update your admin account information and profile picture.");
+
+	    return "admin/profile";
 	}
 
 	@PostMapping("/profile/update")
@@ -395,9 +404,17 @@ public class AdminController {
 		return "redirect:/admin/profile";
 	}
 
+
+	
+	
 	@GetMapping("/change-password")
-	public String changePasswordPage() {
-		return "admin/change_password";
+	public String changePassword(Model model) {
+
+	    model.addAttribute("pageTitle", "Change Password");
+	    model.addAttribute("pageSubtitle",
+	            "Update your account password securely.");
+
+	    return "admin/change_password";
 	}
 
 	@PostMapping("/change-password")

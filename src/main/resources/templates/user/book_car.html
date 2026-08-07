@@ -95,9 +95,7 @@
   </div>
 
   <div class="book-form-box">
-    <h2>Book This Car</h2>
-    <p>Choose your pickup and return dates. Your request will be reviewed by our admin team before payment.</p>
-
+  
     <form th:action="@{'/user/book-car/' + ${car.id}}" method="post" id="bookForm">
 
       <div class="form-group">

@@ -65,7 +65,7 @@ public class UserController {
 	}
 
 	// ---------------------------------------------------------------- Dashboard
-
+	
 	@GetMapping("/dashboard")
 	public String dashboardPage(Model model, Principal principal) {
 		User user = ur.findByEmail(principal.getName());
@@ -74,10 +74,13 @@ public class UserController {
 		model.addAttribute("activeBookings", bookingRepository.countByUserAndStatusIn(user, ACTIVE_STATUSES));
 		model.addAttribute("recentBookings", bookingRepository.findTop5ByUserOrderByBookingDateDesc(user));
 		model.addAttribute("recommendedCars", carRepository.findTop6ByStatusOrderByCreatedAtDesc("AVAILABLE"));
+		
+	    model.addAttribute("pageTitle", "User Dashboard");
+	    model.addAttribute("pageSubtitle", "Manage your bookings, payments and profile.");
 
 		return "user/dashboard";
 	}
-
+	
 	// ---------------------------------------------------------------- Cars
 
 	@GetMapping("/cars")
@@ -92,6 +95,9 @@ public class UserController {
 
 		model.addAttribute("cars", carRepository.search(kw, ft, tr, ct, null));
 		model.addAttribute("keyword", keyword);
+		
+		 model.addAttribute("pageTitle", "Browse Cars");
+		    model.addAttribute("pageSubtitle", "Find and book your preferred rental car.");
 		return "user/cars";
 	}
 
@@ -171,6 +177,10 @@ public class UserController {
 	public String showBookings(Model model, Principal principal) {
 		User user = ur.findByEmail(principal.getName());
 		model.addAttribute("bookings", bookingRepository.findByUserOrderByBookingDateDesc(user));
+		
+	    model.addAttribute("pageTitle", "Booking Details");
+	    model.addAttribute("pageSubtitle",
+	            "View your booking information and payment status.");
 		return "user/bookings";
 	}
 
@@ -217,11 +227,12 @@ public class UserController {
 			carRepository.save(car);
 		}
 
+		
 		ra.addFlashAttribute("success", "Booking cancelled.");
 		return "redirect:/user/bookings";
 	}
 
-	// ---------------------------------------------------------------- Payments
+	// --------------------------------------------------------------- Payments
 
 	@GetMapping("/payments")
 	public String showpayments(Model model, Principal principal) {
@@ -229,11 +240,16 @@ public class UserController {
 
 		Double paid = paymentRepository.totalPaidByUser(user);
 		Double pending = paymentRepository.totalPendingByUser(user);
+		
 
 		model.addAttribute("totalPaid", paid == null ? 0 : paid);
 		model.addAttribute("pendingAmount", pending == null ? 0 : pending);
 		model.addAttribute("totalTransactions", paymentRepository.countByBookingUser(user));
 		model.addAttribute("payments", paymentRepository.findByBookingUserOrderByCreatedAtDesc(user));
+		
+		model.addAttribute("pageTitle", "Payments");
+		model.addAttribute("pageSubtitle",
+		        "View all your payment history.");
 
 		return "user/payments";
 	}
@@ -332,6 +348,9 @@ public class UserController {
 	@GetMapping("/profile")
 	public String userProfile(Model model, Principal principal) {
 		model.addAttribute("user", ur.findByEmail(principal.getName()));
+		model.addAttribute("pageTitle", "My Profile");
+		model.addAttribute("pageSubtitle",
+		        "Update your personal information.");
 		return "user/profile";
 	}
 
@@ -355,8 +374,12 @@ public class UserController {
 	}
 
 	@GetMapping("/change-password")
-	public String changepassword() {
+	public String changepassword(Model model) {
+		model.addAttribute("pageTitle", "Change Password");
+		model.addAttribute("pageSubtitle",
+		        "Update your account password securely.");
 		return "user/change_password";
+		
 	}
 
 	@PostMapping("/change-password")
