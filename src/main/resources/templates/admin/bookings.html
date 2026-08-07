@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/admin_base :: layout(~{::section})}">
+
+<section>
+
+<style>
+  .booking-header {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+    margin-bottom: 24px;
+  }
+
+  .booking-header h2 {
+    font-size: 26px;
+    margin-bottom: 6px;
+  }
+
+  .booking-header p {
+    color: #6b7280;
+  }
+
+  .booking-table-box {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+    overflow-x: auto;
+  }
+
+  .booking-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1050px;
+  }
+
+  .booking-table th,
+  .booking-table td {
+    padding: 16px 12px;
+    border-bottom: 1px solid #eef2f7;
+    text-align: left;
+    font-size: 14px;
+  }
+
+  .booking-table th {
+    color: #6b7280;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+  }
+
+  .booking-table td {
+    color: #374151;
+    font-weight: 650;
+  }
+
+  .status {
+    padding: 7px 12px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 900;
+    display: inline-block;
+  }
+
+  .pending {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  .approved {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  .rejected {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  .completed {
+    background: #dbeafe;
+    color: #1d4ed8;
+  }
+
+  .action-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .approve-btn,
+  .reject-btn,
+  .view-btn {
+    border: none;
+    padding: 9px 13px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 900;
+    cursor: pointer;
+    display: inline-block;
+  }
+
+  .approve-btn {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  .reject-btn {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  .view-btn {
+    background: #eff6ff;
+    color: #2563eb;
+  }
+
+  .empty-box {
+    background: #ffffff;
+    padding: 45px;
+    border-radius: 24px;
+    text-align: center;
+    color: #6b7280;
+    font-weight: 700;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  }
+
+  .empty-box h3 {
+    color: #111827;
+    margin-bottom: 10px;
+    font-size: 24px;
+  }
+</style>
+
+<div class="booking-header">
+  <h2>Manage Bookings</h2>
+  <p>View all booking requests and approve or reject pending bookings.</p>
+</div>
+
+<div class="booking-table-box" th:if="${bookings != null and !bookings.isEmpty()}">
+  <table class="booking-table">
+    <thead>
+      <tr>
+        <th>Booking ID</th>
+        <th>User</th>
+        <th>Car</th>
+        <th>Pickup</th>
+        <th>Return</th>
+        <th>Total Days</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Requested On</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr th:each="booking : ${bookings}">
+        <td>#BK<span th:text="${booking.id}">1001</span></td>
+
+        <td>
+          <strong th:text="${booking.user.name}">Sasanka</strong><br>
+          <small th:text="${booking.user.email}">user@email.com</small>
+        </td>
+
+        <td th:text="${booking.car.name}">Honda City</td>
+        <td th:text="${booking.pickupDate}">2026-05-10</td>
+        <td th:text="${booking.returnDate}">2026-05-12</td>
+        <td th:text="${booking.totalDays}">2</td>
+        <td>₹<span th:text="${booking.totalAmount}">3600</span></td>
+
+        <td>
+          <span class="status"
+                th:classappend="${booking.status == 'APPROVED'} ? ' approved' : (${booking.status == 'REJECTED'} ? ' rejected' : (${booking.status == 'COMPLETED'} ? ' completed' : ' pending'))"
+                th:text="${booking.status}">
+            PENDING
+          </span>
+        </td>
+
+        <td th:text="${booking.bookingDate}">2026-05-05</td>
+
+        <td>
+          <div class="action-group">
+            <a th:href="@{'/admin/bookings/view/' + ${booking.id}}" class="view-btn">View</a>
+
+            <form th:if="${booking.status == 'PENDING'}"
+                  th:action="@{'/admin/bookings/approve/' + ${booking.id}}"
+                  method="post"
+                  style="display:inline;">
+              <button type="submit"
+                      class="approve-btn"
+                      onclick="return confirm('Approve this booking?')">
+                Approve
+              </button>
+            </form>
+
+            <form th:if="${booking.status == 'PENDING'}"
+                  th:action="@{'/admin/bookings/reject/' + ${booking.id}}"
+                  method="post"
+                  style="display:inline;">
+              <button type="submit"
+                      class="reject-btn"
+                      onclick="return confirm('Reject this booking?')">
+                Reject
+              </button>
+            </form>
+
+            <form th:if="${booking.status == 'APPROVED'}"
+                  th:action="@{'/admin/bookings/complete/' + ${booking.id}}"
+                  method="post"
+                  style="display:inline;">
+              <button type="submit"
+                      class="approve-btn"
+                      onclick="return confirm('Mark this booking as completed?')">
+                Mark Completed
+              </button>
+            </form>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Sample UI: remove after backend data works -->
+<div class="booking-table-box" th:if="${bookings == null}">
+  <table class="booking-table">
+    <thead>
+      <tr>
+        <th>Booking ID</th>
+        <th>User</th>
+        <th>Car</th>
+        <th>Pickup</th>
+        <th>Return</th>
+        <th>Total Days</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Requested On</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr>
+        <td>#BK1001</td>
+        <td>
+          <strong>Sasanka</strong><br>
+          <small>sasanka@email.com</small>
+        </td>
+        <td>Honda City</td>
+        <td>2026-05-10</td>
+        <td>2026-05-12</td>
+        <td>2</td>
+        <td>₹3600</td>
+        <td><span class="status pending">PENDING</span></td>
+        <td>2026-05-05</td>
+        <td>
+          <div class="action-group">
+            <a href="#" class="view-btn">View</a>
+            <button class="approve-btn">Approve</button>
+            <button class="reject-btn">Reject</button>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td>#BK1002</td>
+        <td>
+          <strong>Rahul</strong><br>
+          <small>rahul@email.com</small>
+        </td>
+        <td>Mahindra XUV</td>
+        <td>2026-05-15</td>
+        <td>2026-05-18</td>
+        <td>3</td>
+        <td>₹9600</td>
+        <td><span class="status approved">APPROVED</span></td>
+        <td>2026-05-06</td>
+        <td>
+          <div class="action-group">
+            <a href="#" class="view-btn">View</a>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="empty-box" th:if="${bookings != null and bookings.isEmpty()}">
+  <h3>No Bookings Found</h3>
+  <p>No booking requests are available right now.</p>
+</div>
+
+</section>
+</html>

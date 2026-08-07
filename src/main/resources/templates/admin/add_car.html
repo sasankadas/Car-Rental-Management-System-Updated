@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/admin_base :: layout(~{::section})}">
+
+<section>
+
+<style>
+  .form-box {
+    background: #ffffff;
+    padding: 28px;
+    border-radius: 24px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  }
+
+  .form-box h2 {
+    font-size: 26px;
+    margin-bottom: 6px;
+  }
+
+  .form-box p {
+    color: #6b7280;
+    margin-bottom: 24px;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+
+  .form-group {
+    margin-bottom: 18px;
+  }
+
+  .form-group.full {
+    grid-column: span 2;
+  }
+
+  .form-group label {
+    display: block;
+    font-weight: 800;
+    margin-bottom: 8px;
+    color: #374151;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 14px 15px;
+    border: 1px solid #d1d5db;
+    border-radius: 15px;
+    background: #f9fafb;
+    font-size: 15px;
+    outline: none;
+  }
+
+  .form-group textarea {
+    resize: none;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    border-color: #2563eb;
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+  }
+
+  .image-preview-box {
+    border: 2px dashed #cbd5e1;
+    border-radius: 20px;
+    padding: 24px;
+    text-align: center;
+    background: #f9fafb;
+  }
+
+  .preview-img {
+    width: 160px;
+    height: 110px;
+    object-fit: cover;
+    border-radius: 18px;
+    margin-bottom: 12px;
+    display: none;
+  }
+
+  .upload-label {
+    display: inline-block;
+    background: #eff6ff;
+    color: #2563eb;
+    padding: 12px 18px;
+    border-radius: 14px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+  .button-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 14px;
+    margin-top: 10px;
+  }
+
+  .save-btn,
+  .cancel-btn {
+    border: none;
+    padding: 14px 22px;
+    border-radius: 15px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+  .save-btn {
+    background: #2563eb;
+    color: #ffffff;
+  }
+
+  .cancel-btn {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  @media (max-width: 700px) {
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .form-group.full {
+      grid-column: span 1;
+    }
+
+    .button-row {
+      flex-direction: column;
+    }
+  }
+</style>
+
+<div class="form-box">
+  <h2>Add New Car</h2>
+  <p>Add car details, pricing, availability, and upload car image.</p>
+
+  <form th:action="@{/admin/cars/save}"
+        method="post"
+        enctype="multipart/form-data"
+        th:object="${car}">
+
+    <input type="hidden" th:field="*{id}">
+
+    <div class="form-grid">
+
+      <div class="form-group">
+        <label for="name">Car Name</label>
+        <input type="text"
+               id="name"
+               th:field="*{name}"
+               placeholder="Honda City"
+               required>
+      </div>
+
+      <div class="form-group">
+        <label for="brand">Brand</label>
+        <input type="text"
+               id="brand"
+               th:field="*{brand}"
+               placeholder="Honda"
+               required>
+      </div>
+
+      <div class="form-group">
+        <label for="model">Model</label>
+        <input type="text"
+               id="model"
+               th:field="*{model}"
+               placeholder="2024 Model"
+               required>
+      </div>
+
+      <div class="form-group">
+        <label for="carType">Car Type</label>
+        <select id="carType" th:field="*{carType}" required>
+          <option value="">Select Type</option>
+          <option value="Sedan">Sedan</option>
+          <option value="SUV">SUV</option>
+          <option value="Hatchback">Hatchback</option>
+          <option value="Luxury">Luxury</option>
+          <option value="Electric">Electric</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="fuelType">Fuel Type</label>
+        <select id="fuelType" th:field="*{fuelType}" required>
+          <option value="">Select Fuel</option>
+          <option value="Petrol">Petrol</option>
+          <option value="Diesel">Diesel</option>
+          <option value="Electric">Electric</option>
+          <option value="CNG">CNG</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="transmission">Transmission</label>
+        <select id="transmission" th:field="*{transmission}" required>
+          <option value="">Select Transmission</option>
+          <option value="Manual">Manual</option>
+          <option value="Automatic">Automatic</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="seats">Seats</label>
+        <input type="number"
+               id="seats"
+               th:field="*{seats}"
+               placeholder="5"
+               min="1"
+               required>
+      </div>
+
+      <div class="form-group">
+        <label for="pricePerDay">Price Per Day</label>
+        <input type="number"
+               id="pricePerDay"
+               th:field="*{pricePerDay}"
+               placeholder="1800"
+               min="1"
+               required>
+      </div>
+
+      <div class="form-group">
+        <label for="registrationNumber">Registration Number</label>
+        <input type="text"
+               id="registrationNumber"
+               th:field="*{registrationNumber}"
+               placeholder="OD-02-AB-1234"
+               required>
+      </div>
+
+      <div class="form-group">
+        <label for="status">Status</label>
+        <select id="status" th:field="*{status}" required>
+          <option value="AVAILABLE">Available</option>
+          <option value="BOOKED">Booked</option>
+          <option value="MAINTENANCE">Maintenance</option>
+        </select>
+      </div>
+
+      <div class="form-group full">
+        <label for="description">Description</label>
+        <textarea id="description"
+                  th:field="*{description}"
+                  rows="4"
+                  placeholder="Write short car description..."></textarea>
+      </div>
+
+      <div class="form-group full">
+        <label>Car Image</label>
+
+        <div class="image-preview-box">
+          <img th:if="${car.image != null}" th:src="@{/images/cars/{img}(img=${car.image})}"
+               id="previewImage" class="preview-img" alt="Car Preview" style="display:inline-block;">
+          <img th:if="${car.image == null}" id="previewImage" class="preview-img" alt="Car Preview">
+
+          <p style="color:#6b7280; margin-bottom:12px;">
+            Upload a clear image of the car
+          </p>
+
+          <label class="upload-label">
+            Choose Image
+            <input type="file"
+                   name="imageFile"
+                   accept="image/*"
+                   hidden
+                   onchange="previewCarImage(event)">
+          </label>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="button-row">
+      <a th:href="@{/admin/cars}" href="/admin/cars" class="cancel-btn">Cancel</a>
+      <button type="submit" class="save-btn">Save Car</button>
+    </div>
+
+  </form>
+</div>
+
+<script>
+  function previewCarImage(event) {
+    const image = document.getElementById("previewImage");
+    const file = event.target.files[0];
+
+    if (file) {
+      image.src = URL.createObjectURL(file);
+      image.style.display = "inline-block";
+    }
+  }
+</script>
+
+</section>
+</html>

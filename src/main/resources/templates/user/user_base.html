@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:fragment="layout(content)">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title th:text="${title} ?: 'DriveEasy - User Panel'">DriveEasy - User Panel</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    body {
+      background: #f4f7fb;
+      color: #111827;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .user-layout {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 270px 1fr;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: #ffffff;
+      border-right: 1px solid #e5e7eb;
+      padding: 24px 18px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      box-shadow: 8px 0 30px rgba(15, 23, 42, 0.04);
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 900;
+      color: #2563eb;
+      margin-bottom: 28px;
+      padding-left: 8px;
+    }
+
+    .logo span {
+      color: #111827;
+    }
+
+    .user-box {
+      background: linear-gradient(135deg, #2563eb, #111827);
+      color: #ffffff;
+      padding: 18px;
+      border-radius: 22px;
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      margin-bottom: 26px;
+    }
+
+    .user-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: #ffffff;
+      color: #2563eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+
+    .user-box h4 {
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .user-box p {
+      font-size: 13px;
+      color: #dbeafe;
+      word-break: break-all;
+    }
+
+    .sidebar-title {
+      font-size: 12px;
+      color: #9ca3af;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin: 20px 10px 10px;
+    }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .menu a {
+      padding: 13px 14px;
+      border-radius: 15px;
+      color: #4b5563;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: 0.3s;
+    }
+
+    .menu a:hover,
+    .menu a.active {
+      background: #eff6ff;
+      color: #2563eb;
+      transform: translateX(4px);
+    }
+
+    .logout-link {
+      color: #dc2626 !important;
+    }
+
+    .logout-link:hover {
+      background: #fee2e2 !important;
+      color: #991b1b !important;
+    }
+
+    /* Main */
+    .main-area {
+      padding: 26px;
+      min-width: 0;
+    }
+
+    .topbar {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 18px 22px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .page-heading h1 {
+      font-size: 28px;
+      margin-bottom: 4px;
+    }
+
+    .page-heading p {
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .search-form {
+      width: 300px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .search-form input {
+      width: 100%;
+      border: none;
+      outline: none;
+      background: transparent;
+      padding: 13px 0;
+      font-size: 14px;
+    }
+
+    .top-btn {
+      background: #2563eb;
+      color: #ffffff;
+      padding: 13px 18px;
+      border-radius: 15px;
+      font-weight: 800;
+      white-space: nowrap;
+      transition: 0.3s;
+    }
+
+    .top-btn:hover {
+      background: #1d4ed8;
+      transform: translateY(-2px);
+    }
+
+    .alert {
+      padding: 14px 16px;
+      border-radius: 16px;
+      margin-bottom: 22px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .alert-success {
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+
+    .alert-error {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
+    .content-wrapper {
+      min-height: 500px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      border: none;
+      background: #eff6ff;
+      color: #2563eb;
+      padding: 11px 14px;
+      border-radius: 14px;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 900px) {
+      .user-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: fixed;
+        left: -290px;
+        top: 0;
+        width: 270px;
+        z-index: 1000;
+        transition: 0.3s;
+      }
+
+      .sidebar.active {
+        left: 0;
+      }
+
+      .mobile-menu-btn {
+        display: inline-block;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .top-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .search-form {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .main-area {
+        padding: 16px;
+      }
+
+      .page-heading h1 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="user-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="logo">Drive<span>Easy</span></div>
+
+      <div class="user-box">
+        <div class="user-avatar" th:text="${user != null ? #strings.substring(user.name,0,1) : 'U'}">U</div>
+        <div>
+          <h4 th:text="${user != null ? user.name : 'User Name'}">User Name</h4>
+          <p th:text="${user != null ? user.email : 'user@email.com'}">user@email.com</p>
+        </div>
+      </div>
+
+      <div class="sidebar-title">Main Menu</div>
+      <nav class="menu">
+        <a th:href="@{/user/dashboard}" href="/user/dashboard" class="active">🏠 Dashboard</a>
+        <a th:href="@{/user/cars}" href="/user/cars">🚗 Browse Cars</a>
+        <a th:href="@{/user/bookings}" href="/user/bookings">📋 My Bookings</a>
+        <a th:href="@{/user/payments}" href="/user/payments">💳 Payments</a>
+      </nav>
+
+      <div class="sidebar-title">Account</div>
+      <nav class="menu">
+        <a th:href="@{/user/profile}" href="/user/profile">👤 Profile</a>
+        <a th:href="@{/user/change-password}" href="/user/change-password">🔐 Change Password</a>
+        <a th:href="@{/logout}" href="/logout" class="logout-link">🚪 Logout</a>
+      </nav>
+    </aside>
+
+    <!-- Main Area -->
+    <main class="main-area">
+
+      <!-- Topbar -->
+      <header class="topbar">
+        <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+
+        <div class="page-heading">
+          <h1 th:text="${pageTitle} ?: 'User Dashboard'">User Dashboard</h1>
+          <p th:text="${pageSubtitle} ?: 'Manage your bookings, payments, receipts and profile.'">
+            Manage your bookings, payments, receipts and profile.
+          </p>
+        </div>
+
+        <div class="top-actions">
+          <form th:action="@{/user/search-cars}" action="/user/search-cars" method="get" class="search-form">
+            <span>🔍</span>
+            <input type="text" name="keyword" placeholder="Search cars..." />
+          </form>
+
+          <a th:href="@{/user/cars}" href="/user/cars" class="top-btn">Book Car</a>
+        </div>
+      </header>
+
+      <!-- Flash Messages -->
+      <div class="alert alert-success" th:if="${success}" th:text="${success}">
+        Success message
+      </div>
+
+      <div class="alert alert-error" th:if="${error}" th:text="${error}">
+        Error message
+      </div>
+
+      <!-- Page Content Comes Here -->
+      <section class="content-wrapper" th:replace="${content}">
+        <div class="card">
+          <h2>Page content will load here</h2>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      document.getElementById("sidebar").classList.toggle("active");
+    }
+  </script>
+
+</body>
+</html>

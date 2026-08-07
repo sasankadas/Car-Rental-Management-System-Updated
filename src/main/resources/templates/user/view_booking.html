@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{user/user_base :: layout(~{::section})}">
+
+<section>
+
+<style>
+.detail-box { background:#fff; border-radius:24px; padding:28px; box-shadow:0 10px 30px rgba(15,23,42,.06); border:1px solid #eef2f7; max-width:820px; }
+.detail-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:18px; margin-top:18px; }
+.detail-item p { color:#6b7280; font-size:12px; text-transform:uppercase; font-weight:800; margin-bottom:4px; }
+.detail-item h3 { font-size:16px; color:#111827; }
+.status { padding:7px 12px; border-radius:30px; font-size:12px; font-weight:900; }
+.pending { background:#fef3c7; color:#92400e; }
+.approved { background:#dbeafe; color:#1e40af; }
+.rejected { background:#fee2e2; color:#991b1b; }
+.completed { background:#dcfce7; color:#166534; }
+.cancelled { background:#f3f4f6; color:#374151; }
+.action-row { margin-top:22px; display:flex; gap:12px; flex-wrap: wrap; }
+.action-row a { padding:12px 18px; border-radius:14px; font-weight:800; }
+.back-btn { background:#f3f4f6; color:#111827; }
+.pay-btn { background:#2563eb; color:#fff; }
+.cancel-btn { background:#fee2e2; color:#991b1b; }
+.receipt-btn { background:#dcfce7; color:#166534; }
+</style>
+
+<div class="detail-box">
+  <h2 th:text="'Booking #BK' + ${booking.id}">Booking #BK1001</h2>
+  <span class="status"
+        th:classappend="${booking.status == 'APPROVED'} ? ' approved' : (${booking.status == 'REJECTED'} ? ' rejected' : (${booking.status == 'COMPLETED'} ? ' completed' : (${booking.status == 'CANCELLED'} ? ' cancelled' : ' pending')))"
+        th:text="${booking.status}">PENDING</span>
+
+  <div class="detail-grid">
+    <div class="detail-item"><p>Car</p><h3 th:text="${booking.car.name}">Honda City</h3></div>
+    <div class="detail-item"><p>Registration No.</p><h3 th:text="${booking.car.registrationNumber}">-</h3></div>
+    <div class="detail-item"><p>Pickup Date</p><h3 th:text="${booking.pickupDate}">-</h3></div>
+    <div class="detail-item"><p>Return Date</p><h3 th:text="${booking.returnDate}">-</h3></div>
+    <div class="detail-item"><p>Total Days</p><h3 th:text="${booking.totalDays}">-</h3></div>
+    <div class="detail-item"><p>Total Amount</p><h3>₹<span th:text="${booking.totalAmount}">0</span></h3></div>
+    <div class="detail-item"><p>Requested On</p><h3 th:text="${#temporals.format(booking.bookingDate,'dd MMM yyyy, hh:mm a')}">-</h3></div>
+    <div class="detail-item"><p>Payment Status</p><h3 th:text="${payment != null ? payment.status : 'N/A'}">PENDING</h3></div>
+  </div>
+
+  <div class="action-row">
+    <a th:if="${booking.status == 'APPROVED' and payment != null and payment.status == 'PENDING'}"
+       th:href="@{'/user/pay-now/' + ${booking.id}}" class="pay-btn">Pay Now</a>
+
+    <a th:if="${payment != null and payment.status == 'PAID'}"
+       th:href="@{'/user/receipt/' + ${booking.id}}" class="receipt-btn">View Receipt</a>
+
+    <a th:if="${booking.status != 'CANCELLED' and booking.status != 'COMPLETED' and booking.status != 'REJECTED'}"
+       th:href="@{'/user/cancel-booking/' + ${booking.id}}" class="cancel-btn"
+       onclick="return confirm('Are you sure you want to cancel this booking?')">Cancel Booking</a>
+
+    <a th:href="@{/user/bookings}" class="back-btn">Back to Bookings</a>
+  </div>
+</div>
+
+</section>
+</html>
