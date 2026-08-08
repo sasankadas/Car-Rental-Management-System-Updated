@@ -35,10 +35,12 @@ public class EmailServiceImpl implements EmailService{
 	                 sendVerificationMailTemplate(name, link),
 	                 true
 	         );
+	         
 
 	         mailSender.send(message);
 
 	         System.out.println("✅ Verification email sent to: " + to);
+	         System.out.println("-----------------------------------------------------------"+link);
 
 	     } catch (Exception e) {
 
