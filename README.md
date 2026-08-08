@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🚗 DriveEasy — Car Rental Management System
 
 A full-stack Spring Boot car rental platform with separate, role-secured dashboards for
@@ -108,3 +109,6 @@ src/main/resources/
 - The payment flow is a **simulated** checkout (no real card/UPI network is contacted) —
   it demonstrates the full data flow (method selection, transaction ID generation,
   payment status, receipts) without needing a real payment gateway integration.
+=======
+# Car-Rental-Management-System
+>>>>>>> 6a499567fc3b7ca4105a355b893bd184d9ffea61
