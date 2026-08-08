@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # 🚗 DriveEasy — Car Rental Management System
 
 A full-stack Spring Boot car rental platform with separate, role-secured dashboards for
@@ -112,3 +113,6 @@ src/main/resources/
 =======
 # Car-Rental-Management-System
 >>>>>>> 6a499567fc3b7ca4105a355b893bd184d9ffea61
+=======
+# Car-Rental-Management-System-Updated
+>>>>>>> ad13f5da77b546c5049040e90b204d409966293e
