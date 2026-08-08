@@ -1,6 +1,7 @@
 package com.carrental.serviceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -13,23 +14,43 @@ public class EmailServiceImpl implements EmailService{
 	
 	@Autowired
 	private JavaMailSender mailSender;
+	
+	@Value("${mail.from}")
+	private String fromEmail;
 
-	@Override
-	public void sendVerificationMail(String to, String link, String name) {
-		try {
-			MimeMessage message = mailSender.createMimeMessage();
-			MimeMessageHelper helper = new MimeMessageHelper(message, true);
+	 @Override
+	 public void sendVerificationMail(String to, String link, String name) {
 
-			helper.setTo(to);
-			helper.setSubject("Verify Your Email - DriveEasy");
-			helper.setText(sendVerificationMailTemplate(name, link), true); // true = HTML
+	     try {
+	         MimeMessage message = mailSender.createMimeMessage();
 
-			mailSender.send(message);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-	}
+	         MimeMessageHelper helper =
+	                 new MimeMessageHelper(message, true, "UTF-8");
+
+	         helper.setFrom(fromEmail);
+	         helper.setTo(to);
+	         helper.setSubject("Verify Your Email - DriveEasy");
+
+	         helper.setText(
+	                 sendVerificationMailTemplate(name, link),
+	                 true
+	         );
+
+	         mailSender.send(message);
+
+	         System.out.println("✅ Verification email sent to: " + to);
+
+	     } catch (Exception e) {
+
+	         System.err.println("❌ EMAIL SENDING FAILED");
+	         System.err.println("To: " + to);
+	         System.err.println("From: " + fromEmail);
+
+	         e.printStackTrace();
+
+	         throw new RuntimeException("Failed to send verification email", e);
+	     }
+	 }
 
 	@Override
 	public String sendVerificationMailTemplate(String name, String link) {
@@ -112,23 +133,34 @@ public class EmailServiceImpl implements EmailService{
 
 	@Override
 	public void sendOtpMail(String to, String otp) {
-		 try {
-		        MimeMessage message = mailSender.createMimeMessage();
-		        MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
-		        helper.setTo(to);
-		        helper.setSubject("Password Reset OTP");
+	    try {
 
-		        String content = sendOtpMailTemplate(otp);
+	        MimeMessage message = mailSender.createMimeMessage();
 
-		        helper.setText(content, true); // true = HTML
+	        MimeMessageHelper helper =
+	                new MimeMessageHelper(message, true, "UTF-8");
 
-		        mailSender.send(message);
+	        helper.setFrom(fromEmail);
+	        helper.setTo(to);
+	        helper.setSubject("Password Reset OTP");
 
-		    } catch (Exception e) {
-		        e.printStackTrace();
-		    }
-		
+	        helper.setText(
+	                sendOtpMailTemplate(otp),
+	                true
+	        );
+
+	        mailSender.send(message);
+
+	        System.out.println("✅ OTP email sent to: " + to);
+
+	    } catch (Exception e) {
+
+	        System.err.println("❌ OTP EMAIL FAILED");
+	        e.printStackTrace();
+
+	        throw new RuntimeException("Failed to send OTP email", e);
+	    }
 	}
 
 	@Override
