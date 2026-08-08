@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{base :: Layout(~{::section})}">
+
+<section>
+
+
+  <!-- Hero -->
+  <main class="hero" id="home">
+    <div class="container hero-content">
+      <div class="hero-text">
+        <span class="badge">Premium Car Rental Service</span>
+        <h1>Find Your Perfect <span>Rental Car</span> Today</h1>
+        <p>
+          Book your favorite car in minutes with affordable pricing, verified vehicles,
+          secure payment, instant booking confirmation, and doorstep pickup options.
+        </p>
+        <div class="hero-buttons">
+          <a href="#cars" class="primary-btn">Explore Cars</a>
+          <a href="#steps" class="secondary-btn">How Booking Works</a>
+        </div>
+      </div>
+
+      <div class="hero-image">
+        <div class="hero-card">
+          <div class="car-visual">🚗</div>
+          <div class="car-info">
+            <div>
+              <h3>Luxury Sedan</h3>
+              <p>Automatic · AC · 5 Seats</p>
+            </div>
+            <div class="price">₹2499/day</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Search Box -->
+  <div class="container">
+    <form class="search-box">
+      <div class="search-group">
+        <label>Pickup Location</label>
+        <input type="text" placeholder="Enter city or location" />
+      </div>
+
+      <div class="search-group">
+        <label>Pickup Date</label>
+        <input type="date" />
+      </div>
+
+      <div class="search-group">
+        <label>Car Type</label>
+        <select>
+          <option>Select car type</option>
+          <option>Sedan</option>
+          <option>SUV</option>
+          <option>Hatchback</option>
+          <option>Luxury</option>
+        </select>
+      </div>
+
+      <button class="search-btn" type="submit">Search Cars</button>
+    </form>
+  </div>
+
+  <!-- Features -->
+  <section id="features">
+    <div class="container">
+      <div class="section-title">
+        <h2>Why Choose DriveEasy?</h2>
+        <p>Professional service designed for smooth and safe travel.</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="icon">💰</div>
+          <h3>Affordable Pricing</h3>
+          <p>Transparent daily rental charges with no hidden fees. Choose cars according to your budget.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="icon">🛡️</div>
+          <h3>Verified Cars</h3>
+          <p>Every car is checked, maintained, insured, and ready for a safe driving experience.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="icon">⚡</div>
+          <h3>Instant Booking</h3>
+          <p>Book your car online, receive confirmation by email, and download your receipt instantly.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cars -->
+  <section class="cars" id="cars">
+    <div class="container">
+      <div class="section-title">
+        <h2>Featured Rental Cars</h2>
+        <p>Choose from our popular and most-booked vehicles.</p>
+      </div>
+
+      <div class="car-grid">
+        <div class="car-card">
+          <div class="car-img">🚘</div>
+          <div class="car-body">
+            <h3>Honda City</h3>
+            <p>Comfortable sedan for city and highway rides.</p>
+            <div class="car-meta">
+              <span>👥 5 Seats</span>
+              <span>⚙️ Manual</span>
+              <span>⛽ Petrol</span>
+            </div>
+            <div class="rent-row">
+              <div class="rent-price">₹1800 <small>/day</small></div>
+              <a href="#" class="book-btn">Book Now</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="car-card">
+          <div class="car-img">🚙</div>
+          <div class="car-body">
+            <h3>Mahindra XUV</h3>
+            <p>Powerful SUV for family trips and long journeys.</p>
+            <div class="car-meta">
+              <span>👥 7 Seats</span>
+              <span>⚙️ Manual</span>
+              <span>⛽ Diesel</span>
+            </div>
+            <div class="rent-row">
+              <div class="rent-price">₹3200 <small>/day</small></div>
+              <a href="#" class="book-btn">Book Now</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="car-card">
+          <div class="car-img">🏎️</div>
+          <div class="car-body">
+            <h3>BMW 5 Series</h3>
+            <p>Premium luxury car for business and special events.</p>
+            <div class="car-meta">
+              <span>👥 5 Seats</span>
+              <span>⚙️ Auto</span>
+              <span>⛽ Petrol</span>
+            </div>
+            <div class="rent-row">
+              <div class="rent-price">₹7500 <small>/day</small></div>
+              <a href="#" class="book-btn">Book Now</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Steps -->
+  <section id="steps">
+    <div class="container">
+      <div class="section-title">
+        <h2>How It Works</h2>
+        <p>Simple booking process for users.</p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <h3>Search Car</h3>
+          <p>Select location, date, and car type according to your need.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <h3>Choose Vehicle</h3>
+          <p>Compare price, features, fuel type, seats, and availability.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <h3>Make Payment</h3>
+          <p>Pay securely using online payment gateway integration.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">4</div>
+          <h3>Enjoy Ride</h3>
+          <p>Receive booking details and receipt by email instantly.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <div class="container">
+    <div class="cta">
+      <h2>Ready to Book Your Next Ride?</h2>
+      <p>
+        Start your journey with trusted rental cars, flexible pricing,
+        verified vehicles, and a smooth booking experience.
+      </p>
+      <a href="#cars" class="primary-btn">Book a Car Now</a>
+    </div>
+  </div>
+
+  
+
+</section>
+
+
+
+
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/admin_base :: layout(~{::section})}">
+
+<section>
+
+<style>
+.detail-box { background:#fff; border-radius:24px; padding:28px; box-shadow:0 10px 30px rgba(15,23,42,.06); border:1px solid #eef2f7; max-width:900px; margin-bottom:24px; }
+.detail-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:18px; }
+.detail-item p { color:#6b7280; font-size:12px; text-transform:uppercase; font-weight:800; margin-bottom:4px; }
+.detail-item h3 { font-size:16px; color:#111827; }
+.user-avatar-lg { width:72px; height:72px; border-radius:50%; background:#eff6ff; color:#2563eb; display:flex; align-items:center; justify-content:center; font-size:28px; font-weight:900; margin-bottom:10px; }
+.user-img-lg { width:72px; height:72px; border-radius:50%; object-fit:cover; margin-bottom:10px; }
+table.mini { width:100%; border-collapse:collapse; margin-top:14px; }
+table.mini th, table.mini td { padding:12px; border-bottom:1px solid #eef2f7; text-align:left; font-size:14px; }
+table.mini th { color:#6b7280; text-transform:uppercase; font-size:11px; }
+.status { padding:6px 10px; border-radius:30px; font-size:11px; font-weight:900; }
+.pending { background:#fef3c7; color:#92400e; }
+.approved { background:#dbeafe; color:#1e40af; }
+.rejected { background:#fee2e2; color:#991b1b; }
+.completed { background:#dcfce7; color:#166534; }
+.cancelled { background:#f3f4f6; color:#374151; }
+.action-row { margin-top:20px; display:flex; gap:12px; }
+.action-row a { padding:12px 18px; border-radius:14px; font-weight:800; }
+.back-btn { background:#f3f4f6; color:#111827; }
+</style>
+
+<div class="detail-box">
+
+  <img th:if="${viewedUser.profileImage != null}" th:src="@{/images/{img}(img=${viewedUser.profileImage})}" class="user-img-lg" alt="User">
+  <div th:if="${viewedUser.profileImage == null}" class="user-avatar-lg" th:text="${#strings.substring(viewedUser.name,0,1)}">U</div>
+
+  <h2 th:text="${viewedUser.name}">User Name</h2>
+  <p style="color:#6b7280;" th:text="${viewedUser.email}">user@email.com</p>
+
+  <div class="detail-grid">
+    <div class="detail-item"><p>Phone</p><h3 th:text="${viewedUser.phone}">-</h3></div>
+    <div class="detail-item"><p>Address</p><h3 th:text="${viewedUser.address}">-</h3></div>
+    <div class="detail-item"><p>Role</p><h3 th:text="${viewedUser.role}">USER</h3></div>
+    <div class="detail-item"><p>Status</p><h3 th:text="${viewedUser.enabled ? 'Verified' : 'Not Verified'}">Verified</h3></div>
+    <div class="detail-item"><p>Joined</p><h3 th:text="${#temporals.format(viewedUser.createdAt,'dd MMM yyyy')}">-</h3></div>
+    <div class="detail-item"><p>Last Updated</p><h3 th:text="${#temporals.format(viewedUser.updatedAt,'dd MMM yyyy')}">-</h3></div>
+  </div>
+
+  <div class="action-row">
+    <a th:href="@{/admin/users}" class="back-btn">Back to Users</a>
+  </div>
+</div>
+
+<div class="detail-box">
+  <h3 style="margin-bottom:6px;">Booking History</h3>
+  <table class="mini">
+    <thead>
+      <tr><th>Booking</th><th>Car</th><th>Pickup</th><th>Return</th><th>Amount</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      <tr th:each="b : ${userBookings}">
+        <td th:text="'#BK' + ${b.id}">#BK1001</td>
+        <td th:text="${b.car.name}">Honda City</td>
+        <td th:text="${b.pickupDate}">-</td>
+        <td th:text="${b.returnDate}">-</td>
+        <td>₹<span th:text="${b.totalAmount}">0</span></td>
+        <td>
+          <span class="status"
+                th:classappend="${b.status == 'APPROVED'} ? ' approved' : (${b.status == 'REJECTED'} ? ' rejected' : (${b.status == 'COMPLETED'} ? ' completed' : (${b.status == 'CANCELLED'} ? ' cancelled' : ' pending')))"
+                th:text="${b.status}">PENDING</span>
+        </td>
+      </tr>
+      <tr th:if="${userBookings == null or userBookings.isEmpty()}">
+        <td colspan="6" style="text-align:center; color:#6b7280;">No bookings yet.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</section>
+</html>

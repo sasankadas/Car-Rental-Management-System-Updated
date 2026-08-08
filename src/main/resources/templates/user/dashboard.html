@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{user/user_base :: layout(~{::section})}">
+
+<section>
+
+  <style>
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 22px;
+      margin-bottom: 26px;
+    }
+
+    .stat-card {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+      border: 1px solid #eef2f7;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::after {
+      content: "";
+      position: absolute;
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: #eff6ff;
+      right: -28px;
+      top: -28px;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.09);
+    }
+
+    .stat-info p {
+      color: #6b7280;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .stat-info h2 {
+      font-size: 32px;
+      color: #111827;
+    }
+
+    .stat-info small {
+      display: inline-block;
+      margin-top: 8px;
+      color: #16a34a;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .stat-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 18px;
+      background: #eff6ff;
+      color: #2563eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .main-dashboard {
+      display: grid;
+      grid-template-columns: 1.6fr 0.9fr;
+      gap: 24px;
+      margin-bottom: 26px;
+    }
+
+    .panel {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+      border: 1px solid #eef2f7;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .panel-header h2 {
+      font-size: 22px;
+      color: #111827;
+    }
+
+    .panel-header p {
+      color: #6b7280;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .view-link {
+      color: #2563eb;
+      font-weight: 800;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .booking-table-wrap {
+      overflow-x: auto;
+    }
+
+    .booking-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 720px;
+    }
+
+    .booking-table th,
+    .booking-table td {
+      padding: 15px 12px;
+      text-align: left;
+      border-bottom: 1px solid #eef2f7;
+      font-size: 14px;
+    }
+
+    .booking-table th {
+      color: #6b7280;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+    }
+
+    .booking-table td {
+      color: #374151;
+      font-weight: 650;
+    }
+
+    .car-cell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .car-thumb {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #111827, #2563eb);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 21px;
+      flex-shrink: 0;
+    }
+
+    .status {
+      padding: 7px 12px;
+      border-radius: 30px;
+      font-size: 12px;
+      font-weight: 900;
+      display: inline-block;
+    }
+
+    .confirmed {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .pending {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .cancelled {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .receipt-btn {
+      color: #2563eb;
+      font-weight: 900;
+    }
+
+    .profile-panel {
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .profile-panel::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 105px;
+      background: linear-gradient(135deg, #2563eb, #111827);
+    }
+
+    .profile-avatar-lg {
+      width: 105px;
+      height: 105px;
+      border-radius: 50%;
+      background: #ffffff;
+      color: #2563eb;
+      border: 6px solid #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 42px;
+      font-weight: 900;
+      margin: 48px auto 14px;
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.15);
+    }
+
+    .profile-panel h3 {
+      font-size: 22px;
+      margin-bottom: 6px;
+    }
+
+    .profile-panel p {
+      color: #6b7280;
+      font-size: 14px;
+      word-break: break-all;
+    }
+
+    .profile-info {
+      display: grid;
+      gap: 12px;
+      margin: 22px 0;
+      text-align: left;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      background: #f9fafb;
+      padding: 13px;
+      border-radius: 15px;
+      font-size: 14px;
+    }
+
+    .info-row span:first-child {
+      color: #6b7280;
+      font-weight: 700;
+    }
+
+    .info-row span:last-child {
+      font-weight: 900;
+      text-align: right;
+    }
+
+    .profile-actions {
+      display: grid;
+      gap: 12px;
+    }
+
+    .primary-action,
+    .secondary-action {
+      padding: 13px 16px;
+      border-radius: 15px;
+      font-weight: 900;
+      text-align: center;
+      transition: 0.3s;
+    }
+
+    .primary-action {
+      background: #2563eb;
+      color: #ffffff;
+    }
+
+    .secondary-action {
+      background: #eff6ff;
+      color: #2563eb;
+    }
+
+    .primary-action:hover,
+    .secondary-action:hover {
+      transform: translateY(-2px);
+    }
+
+    .cars-section {
+      margin-bottom: 26px;
+    }
+
+    .cars-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .car-card {
+      background: #f9fafb;
+      border: 1px solid #eef2f7;
+      border-radius: 22px;
+      overflow: hidden;
+      transition: 0.3s;
+    }
+
+    .car-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
+    }
+
+    .car-image {
+      height: 145px;
+      background: linear-gradient(135deg, #111827, #2563eb);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 58px;
+    }
+
+    .car-details {
+      padding: 17px;
+    }
+
+    .car-details h3 {
+      font-size: 19px;
+      margin-bottom: 7px;
+    }
+
+    .car-details p {
+      color: #6b7280;
+      font-size: 13px;
+      margin-bottom: 13px;
+    }
+
+    .car-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      color: #6b7280;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+
+    .car-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .price {
+      font-size: 20px;
+      font-weight: 900;
+      color: #2563eb;
+    }
+
+    .price small {
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    .book-btn {
+      background: #111827;
+      color: #ffffff;
+      padding: 10px 13px;
+      border-radius: 13px;
+      font-size: 13px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 1180px) {
+      .cars-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .main-dashboard {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .dashboard-grid,
+      .cars-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .panel-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .stat-card {
+        padding: 20px;
+      }
+    }
+  </style>
+  
+  
+
+  <!-- Stats Cards -->
+  <div class="dashboard-grid">
+
+    <div class="stat-card">
+      <div class="stat-info">
+        <p>Total Bookings</p>
+        <h2 th:text="${totalBookings} ?: 12">12</h2>
+        <small>+2 this month</small>
+      </div>
+      <div class="stat-icon">📋</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-info">
+        <p>Active Booking</p>
+        <h2 th:text="${activeBookings} ?: 2">2</h2>
+        <small>Currently running</small>
+      </div>
+      <div class="stat-icon">🚗</div>
+    </div>
+
+  </div>
+
+  <!-- Booking + Profile -->
+  <div class="main-dashboard">
+
+    <!-- Recent Bookings -->
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <h2>Recent Bookings</h2>
+          <p>Your latest car rental activity</p>
+        </div>
+        <a th:href="@{/user/bookings}" href="/user/bookings" class="view-link">View All</a>
+      </div>
+
+      <div class="booking-table-wrap">
+        <table class="booking-table">
+          <thead>
+            <tr>
+              <th>Car</th>
+              <th>Pickup</th>
+              <th>Return</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Receipt</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            <tr th:each="booking : ${recentBookings}">
+              <td>
+                <div class="car-cell">
+                  <div class="car-thumb">🚗</div>
+                  <span th:text="${booking.car.name}">Honda City</span>
+                </div>
+              </td>
+              <td th:text="${booking.pickupDate}">2026-05-08</td>
+              <td th:text="${booking.returnDate}">2026-05-10</td>
+              <td>₹<span th:text="${booking.totalAmount}">3600</span></td>
+              <td>
+                <span class="status confirmed" th:text="${booking.status}">CONFIRMED</span>
+              </td>
+              <td>
+                <a class="receipt-btn" th:href="@{'/user/receipt/' + ${booking.id}}" href="#">Download</a>
+              </td>
+            </tr>
+
+            <!-- Sample row: remove after backend works -->
+            <tr th:if="${recentBookings == null}">
+              <td>
+                <div class="car-cell">
+                  <div class="car-thumb">🚘</div>
+                  <span>Honda City</span>
+                </div>
+              </td>
+              <td>2026-05-08</td>
+              <td>2026-05-10</td>
+              <td>₹3600</td>
+              <td><span class="status confirmed">CONFIRMED</span></td>
+              <td><a href="#" class="receipt-btn">Download</a></td>
+            </tr>
+
+            <tr th:if="${recentBookings == null}">
+              <td>
+                <div class="car-cell">
+                  <div class="car-thumb">🚙</div>
+                  <span>Mahindra XUV</span>
+                </div>
+              </td>
+              <td>2026-05-15</td>
+              <td>2026-05-18</td>
+              <td>₹9600</td>
+              <td><span class="status pending">PENDING</span></td>
+              <td><a href="#" class="receipt-btn">Download</a></td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Profile -->
+    <div class="panel profile-panel">
+      <div class="profile-avatar-lg" th:text="${user != null ? #strings.substring(user.name,0,1) : 'U'}">U</div>
+
+      <h3 th:text="${user != null ? user.name : 'User Name'}">User Name</h3>
+      <p th:text="${user != null ? user.email : 'user@email.com'}">user@email.com</p>
+
+      <div class="profile-info">
+        <div class="info-row">
+          <span>Phone</span>
+          <span th:text="${user != null ? user.phone : '+91 98765 43210'}">+91 98765 43210</span>
+        </div>
+
+        <div class="info-row">
+          <span>Role</span>
+          <span th:text="${user != null ? user.role : 'USER'}">USER</span>
+        </div>
+
+        <div class="info-row">
+          <span>Status</span>
+          <span th:text="${user != null && user.enabled ? 'Verified' : 'Not Verified'}">Verified</span>
+        </div>
+      </div>
+
+      <div class="profile-actions">
+        <a th:href="@{/user/profile}" href="/user/profile" class="primary-action">Edit Profile</a>
+        <a th:href="@{/user/change-password}" href="/user/change-password" class="secondary-action">Change Password</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Recommended Cars -->
+  <div class="panel cars-section">
+    <div class="panel-header">
+      <div>
+        <h2>Recommended Cars</h2>
+        <p>Popular choices based on availability</p>
+      </div>
+      <a th:href="@{/user/cars}" href="/user/cars" class="view-link">Browse More</a>
+    </div>
+
+    <div class="cars-grid">
+
+      <div class="car-card" th:each="car : ${recommendedCars}">
+        <div class="car-image">🚗</div>
+        <div class="car-details">
+          <h3 th:text="${car.name}">Honda City</h3>
+          <p th:text="${car.description}">Comfortable sedan for city rides.</p>
+
+          <div class="car-meta">
+            <span th:text="${car.seats + ' Seats'}">5 Seats</span>
+            <span th:text="${car.fuelType}">Petrol</span>
+            <span th:text="${car.transmission}">Manual</span>
+          </div>
+
+          <div class="car-bottom">
+            <div class="price">₹<span th:text="${car.pricePerDay}">1800</span><small>/day</small></div>
+            <a th:href="@{'/user/book-car/' + ${car.id}}" href="#" class="book-btn">Book</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sample cards: remove after backend works -->
+      <div class="car-card" th:if="${recommendedCars == null}">
+        <div class="car-image">🚘</div>
+        <div class="car-details">
+          <h3>Honda City</h3>
+          <p>Comfortable sedan for city rides.</p>
+          <div class="car-meta">
+            <span>5 Seats</span>
+            <span>Petrol</span>
+            <span>Manual</span>
+          </div>
+          <div class="car-bottom">
+            <div class="price">₹1800<small>/day</small></div>
+            <a href="#" class="book-btn">Book</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="car-card" th:if="${recommendedCars == null}">
+        <div class="car-image">🚙</div>
+        <div class="car-details">
+          <h3>Mahindra XUV</h3>
+          <p>Powerful SUV for family trips.</p>
+          <div class="car-meta">
+            <span>7 Seats</span>
+            <span>Diesel</span>
+            <span>Manual</span>
+          </div>
+          <div class="car-bottom">
+            <div class="price">₹3200<small>/day</small></div>
+            <a href="#" class="book-btn">Book</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="car-card" th:if="${recommendedCars == null}">
+        <div class="car-image">🏎️</div>
+        <div class="car-details">
+          <h3>BMW 5 Series</h3>
+          <p>Premium car for business travel.</p>
+          <div class="car-meta">
+            <span>5 Seats</span>
+            <span>Petrol</span>
+            <span>Auto</span>
+          </div>
+          <div class="car-bottom">
+            <div class="price">₹7500<small>/day</small></div>
+            <a href="#" class="book-btn">Book</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</section>
+</html>

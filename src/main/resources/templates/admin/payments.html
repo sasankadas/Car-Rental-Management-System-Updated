@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/admin_base :: layout(~{::section})}">
+
+<section>
+
+<style>
+  .payment-header {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+    margin-bottom: 24px;
+  }
+
+  .payment-header h2 {
+    font-size: 26px;
+    margin-bottom: 6px;
+  }
+
+  .payment-header p {
+    color: #6b7280;
+  }
+
+  .payment-table-box {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+    overflow-x: auto;
+  }
+
+  .payment-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1050px;
+  }
+
+  .payment-table th,
+  .payment-table td {
+    padding: 16px 12px;
+    border-bottom: 1px solid #eef2f7;
+    text-align: left;
+    font-size: 14px;
+  }
+
+  .payment-table th {
+    color: #6b7280;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+  }
+
+  .payment-table td {
+    color: #374151;
+    font-weight: 650;
+  }
+
+  .status {
+    padding: 7px 12px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 900;
+    display: inline-block;
+  }
+
+  .paid {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  .pending {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  .failed {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  .action-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .view-btn,
+  .receipt-btn {
+    padding: 9px 13px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 900;
+    display: inline-block;
+  }
+
+  .view-btn {
+    background: #eff6ff;
+    color: #2563eb;
+  }
+
+  .receipt-btn {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  .empty-box {
+    background: #ffffff;
+    padding: 45px;
+    border-radius: 24px;
+    text-align: center;
+    color: #6b7280;
+    font-weight: 700;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  }
+
+  .empty-box h3 {
+    color: #111827;
+    margin-bottom: 10px;
+    font-size: 24px;
+  }
+</style>
+
+<div class="payment-header">
+
+
+<div class="payment-table-box" th:if="${payments != null and !payments.isEmpty()}">
+  <table class="payment-table">
+    <thead>
+      <tr>
+        <th>Payment ID</th>
+        <th>User</th>
+        <th>Booking ID</th>
+        <th>Car</th>
+        <th>Method</th>
+        <th>Transaction ID</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Payment Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr th:each="payment : ${payments}">
+        <td th:text="${payment.paymentId}">PAY1001</td>
+
+        <td>
+          <strong th:text="${payment.booking.user.name}">Sasanka</strong><br>
+          <small th:text="${payment.booking.user.email}">user@email.com</small>
+        </td>
+
+        <td>#BK<span th:text="${payment.booking.id}">1001</span></td>
+        <td th:text="${payment.booking.car.name}">Honda City</td>
+        <td th:text="${payment.method}">Razorpay</td>
+        <td th:text="${payment.transactionId}">txn_123456</td>
+        <td>₹<span th:text="${payment.amount}">3600</span></td>
+
+        <td>
+          <span class="status"
+                th:classappend="${payment.status == 'PAID'} ? ' paid' : (${payment.status == 'PENDING'} ? ' pending' : ' failed')"
+                th:text="${payment.status}">
+            PAID
+          </span>
+        </td>
+
+        <td th:text="${payment.paymentDate}">2026-05-05</td>
+
+        <td>
+          <div class="action-group">
+            <a th:href="@{'/admin/payments/view/' + ${payment.id}}" class="view-btn">View</a>
+
+            <a th:if="${payment.status == 'PAID'}"
+               th:href="@{'/admin/receipts/view/' + ${payment.booking.id}}"
+               class="receipt-btn">
+              Receipt
+            </a>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Sample UI: remove after backend works -->
+<div class="payment-table-box" th:if="${payments == null}">
+  <table class="payment-table">
+    <thead>
+      <tr>
+        <th>Payment ID</th>
+        <th>User</th>
+        <th>Booking ID</th>
+        <th>Car</th>
+        <th>Method</th>
+        <th>Transaction ID</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Payment Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr>
+        <td>PAY1001</td>
+        <td>
+          <strong>Sasanka Das</strong><br>
+          <small>sasanka@email.com</small>
+        </td>
+        <td>#BK1001</td>
+        <td>Honda City</td>
+        <td>Razorpay</td>
+        <td>txn_123456</td>
+        <td>₹3600</td>
+        <td><span class="status paid">PAID</span></td>
+        <td>2026-05-05</td>
+        <td>
+          <div class="action-group">
+            <a href="#" class="view-btn">View</a>
+            <a href="#" class="receipt-btn">Receipt</a>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td>PAY1002</td>
+        <td>
+          <strong>Rahul Kumar</strong><br>
+          <small>rahul@email.com</small>
+        </td>
+        <td>#BK1002</td>
+        <td>Mahindra XUV</td>
+        <td>Razorpay</td>
+        <td>Pending</td>
+        <td>₹9600</td>
+        <td><span class="status pending">PENDING</span></td>
+        <td>Pending</td>
+        <td>
+          <div class="action-group">
+            <a href="#" class="view-btn">View</a>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="empty-box" th:if="${payments != null and payments.isEmpty()}">
+  <h3>No Payments Found</h3>
+  <p>No payment records are available right now.</p>
+</div>
+
+</section>
+</html>	

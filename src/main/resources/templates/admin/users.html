@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/admin_base :: layout(~{::section})}">
+
+<section>
+
+<style>
+  .users-header {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+    margin-bottom: 24px;
+  }
+
+  .users-header h2 {
+    font-size: 26px;
+    margin-bottom: 6px;
+  }
+
+  .users-header p {
+    color: #6b7280;
+  }
+
+  .filter-box {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+    margin-bottom: 24px;
+  }
+
+  .filter-form {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr auto;
+    gap: 14px;
+  }
+
+  .filter-form input,
+  .filter-form select {
+    padding: 14px;
+    border-radius: 15px;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+    outline: none;
+  }
+
+  .filter-form button {
+    border: none;
+    background: #111827;
+    color: white;
+    padding: 14px 18px;
+    border-radius: 15px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+  .users-table-box {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+    overflow-x: auto;
+  }
+
+  .users-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1000px;
+  }
+
+  .users-table th,
+  .users-table td {
+    padding: 16px 12px;
+    border-bottom: 1px solid #eef2f7;
+    text-align: left;
+    font-size: 14px;
+  }
+
+  .users-table th {
+    color: #6b7280;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+  }
+
+  .users-table td {
+    color: #374151;
+    font-weight: 650;
+  }
+
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .user-img,
+  .user-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .user-img {
+    object-fit: cover;
+    border: 3px solid #eff6ff;
+  }
+
+  .user-avatar {
+    background: linear-gradient(135deg, #111827, #2563eb);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+    font-weight: 900;
+  }
+
+  .user-info strong {
+    display: block;
+    color: #111827;
+    margin-bottom: 4px;
+  }
+
+  .user-info small {
+    color: #6b7280;
+  }
+
+  .status {
+    padding: 7px 12px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 900;
+    display: inline-block;
+  }
+
+  .verified {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  .not-verified {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  .role-badge {
+    padding: 7px 12px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 900;
+    background: #eff6ff;
+    color: #2563eb;
+    display: inline-block;
+  }
+
+  .action-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .view-btn,
+  .enable-btn,
+  .disable-btn,
+  .delete-btn {
+    padding: 9px 13px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 900;
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+  }
+
+  .view-btn {
+    background: #eff6ff;
+    color: #2563eb;
+  }
+
+  .enable-btn {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  .disable-btn {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  .delete-btn {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  .empty-box {
+    background: #ffffff;
+    padding: 45px;
+    border-radius: 24px;
+    text-align: center;
+    color: #6b7280;
+    font-weight: 700;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  }
+
+  .empty-box h3 {
+    color: #111827;
+    margin-bottom: 10px;
+    font-size: 24px;
+  }
+
+  @media (max-width: 900px) {
+    .filter-form {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+
+
+<div class="filter-box">
+  <form th:action="@{/admin/users}" method="get" class="filter-form">
+    <input type="text"
+           name="keyword"
+           placeholder="Search name, email or phone..."
+           th:value="${keyword}">
+
+    <select name="role">
+      <option value="">All Roles</option>
+      <option value="USER">USER</option>
+      <option value="ADMIN">ADMIN</option>
+    </select>
+
+    <select name="enabled">
+      <option value="">All Status</option>
+      <option value="true">Verified</option>
+      <option value="false">Not Verified</option>
+    </select>
+
+    <button type="submit">Filter</button>
+  </form>
+</div>
+
+<div class="users-table-box" th:if="${users != null and !users.isEmpty()}">
+  <table class="users-table">
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Phone</th>
+        <th>Address</th>
+        <th>Role</th>
+        <th>Status</th>
+        <th>Created At</th>
+        <th>Updated At</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr th:each="u : ${users}">
+        <td>
+          <div class="user-info">
+            <img th:if="${u.profileImage != null}"
+                 th:src="@{/images/{img}(img=${u.profileImage})}"
+                 class="user-img"
+                 alt="User">
+
+            <div th:if="${u.profileImage == null}"
+                 class="user-avatar"
+                 th:text="${#strings.substring(u.name,0,1)}">
+              U
+            </div>
+
+            <div>
+              <strong th:text="${u.name}">User Name</strong>
+              <small th:text="${u.email}">user@email.com</small>
+            </div>
+          </div>
+        </td>
+
+        <td th:text="${u.phone}">9876543210</td>
+        <td th:text="${u.address}">Bhubaneswar</td>
+
+        <td>
+          <span class="role-badge" th:text="${u.role}">USER</span>
+        </td>
+
+        <td>
+          <span class="status"
+                th:classappend="${u.enabled} ? ' verified' : ' not-verified'"
+                th:text="${u.enabled ? 'Verified' : 'Not Verified'}">
+            Verified
+          </span>
+        </td>
+
+        <td th:text="${#temporals.format(u.createdAt, 'dd MMM yyyy')}">05 May 2026</td>
+        <td th:text="${#temporals.format(u.updatedAt, 'dd MMM yyyy')}">05 May 2026</td>
+
+        <td>
+          <div class="action-group">
+            <a th:href="@{'/admin/users/view/' + ${u.id}}" class="view-btn">View</a>
+
+            <form th:if="${!u.enabled}"
+                  th:action="@{'/admin/users/enable/' + ${u.id}}"
+                  method="post"
+                  style="display:inline;">
+              <button type="submit"
+                      class="enable-btn"
+                      onclick="return confirm('Enable this user account?')">
+                Enable
+              </button>
+            </form>
+
+            <form th:if="${u.enabled}"
+                  th:action="@{'/admin/users/disable/' + ${u.id}}"
+                  method="post"
+                  style="display:inline;">
+              <button type="submit"
+                      class="disable-btn"
+                      onclick="return confirm('Disable this user account?')">
+                Disable
+              </button>
+            </form>
+
+            <a th:href="@{'/admin/users/delete/' + ${u.id}}"
+               class="delete-btn"
+               onclick="return confirm('Are you sure you want to delete this user?')">
+              Delete
+            </a>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Sample UI: remove after backend works -->
+<div class="users-table-box" th:if="${users == null}">
+  <table class="users-table">
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Phone</th>
+        <th>Address</th>
+        <th>Role</th>
+        <th>Status</th>
+        <th>Created At</th>
+        <th>Updated At</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr>
+        <td>
+          <div class="user-info">
+            <div class="user-avatar">S</div>
+            <div>
+              <strong>Sasanka Das</strong>
+              <small>sasanka@email.com</small>
+            </div>
+          </div>
+        </td>
+        <td>9876543210</td>
+        <td>Bhubaneswar</td>
+        <td><span class="role-badge">USER</span></td>
+        <td><span class="status verified">Verified</span></td>
+        <td>05 May 2026</td>
+        <td>05 May 2026</td>
+        <td>
+          <div class="action-group">
+            <a href="#" class="view-btn">View</a>
+            <button class="disable-btn">Disable</button>
+            <a href="#" class="delete-btn">Delete</a>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <div class="user-info">
+            <div class="user-avatar">R</div>
+            <div>
+              <strong>Rahul Kumar</strong>
+              <small>rahul@email.com</small>
+            </div>
+          </div>
+        </td>
+        <td>9123456780</td>
+        <td>Cuttack</td>
+        <td><span class="role-badge">USER</span></td>
+        <td><span class="status not-verified">Not Verified</span></td>
+        <td>01 May 2026</td>
+        <td>01 May 2026</td>
+        <td>
+          <div class="action-group">
+            <a href="#" class="view-btn">View</a>
+            <button class="enable-btn">Enable</button>
+            <a href="#" class="delete-btn">Delete</a>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="empty-box" th:if="${users != null and users.isEmpty()}">
+  <h3>No Users Found</h3>
+  <p>No registered users are available right now.</p>
+</div>
+
+</section>
+</html>
